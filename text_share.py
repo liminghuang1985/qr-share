@@ -134,10 +134,11 @@ function showToast(msg) {
 }
 function init(content, expires) {
   rawContent = content;
-  rawExpires = expires;
-  document.getElementById("text").value = content;
-  if (expires) {
-    var parts = expires.split(/[- :]/);
+  var decodedExpires = expires ? atob(expires) : "";
+  rawExpires = decodedExpires;
+  document.getElementById("text").value = atob(content);
+  if (decodedExpires) {
+    var parts = decodedExpires.split(/[- :]/);
     var d = new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
     var now = new Date();
     var diff = d - now;
