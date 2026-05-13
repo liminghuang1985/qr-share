@@ -106,26 +106,36 @@ var rawContent = "";
 var rawExpires = "";
 
 function copyText() {
-  navigator.clipboard.writeText(document.getElementById("text").value).then(
-    function() { showToast("已复制到剪贴板"); },
-    function() {
-      var ta = document.createElement("textarea");
-      ta.value = document.getElementById("text").value;
-      ta.style.position = "fixed"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.select();
-      try { document.execCommand("copy"); showToast("已复制到剪贴板"); }
-      catch(e) { showToast("复制失败，请手动选择复制"); }
-      document.body.removeChild(ta);
-    }
-  );
+  var ta = document.createElement("textarea");
+  ta.value = document.getElementById("text").value;
+  ta.style.position = "fixed";
+  ta.style.top = "0";
+  ta.style.left = "0";
+  ta.style.opacity = "0";
+  ta.style.pointerEvents = "none";
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, ta.value.length);
+  var ok = false;
+  try { ok = document.execCommand("copy"); } catch(e) {}
+  document.body.removeChild(ta);
+  showToast(ok ? "已复制到剪贴板" : "复制失败，请长按文字手动复制");
 }
 function shareText() {
   var url = window.location.href;
-  if (navigator.share) {
-    navigator.share({ title: "文字分享", text: document.getElementById("text").value, url: url });
-  } else {
-    navigator.clipboard.writeText(url).then(function() { showToast("链接已复制"); });
-  }
+  var ta = document.createElement("textarea");
+  ta.value = url;
+  ta.style.position = "fixed";
+  ta.style.top = "0";
+  ta.style.left = "0";
+  ta.style.opacity = "0";
+  ta.style.pointerEvents = "none";
+  document.body.appendChild(ta);
+  ta.select();
+  var ok = false;
+  try { ok = document.execCommand("copy"); } catch(e) {}
+  document.body.removeChild(ta);
+  showToast(ok ? "链接已复制" : "复制失败，请长按链接手动复制");
 }
 function showToast(msg) {
   var t = document.getElementById("toast");
