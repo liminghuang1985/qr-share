@@ -167,13 +167,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 content = data["content"]
                 b64_content = base64.b64encode(content.encode("utf-8")).decode("ascii")
                 b64_expires = base64.b64encode(expires.encode("utf-8")).decode("ascii") if expires else ""
-                inject_script = '<script>var rawContent = "' + b64_content + '"; var rawExpires = "' + b64_expires + '";</script>'
-                html = VIEW_HTML.replace('<script>\nvar rawContent = "";',
-                    inject_script)
-                # init() 里已经用了 rawExpires，这里不需要重复处理
+                # 直接替换全局变量（去掉 init 函数对参数的依赖）
+                html = VIEW_HTML
+                html = html.replace('var rawContent = "";', 'var rawContent = "' + b64_content + '";')
+                html = html.replace('var rawExpires = "";', 'var rawExpires = "' + b64_expires + '";')
+                # init() 里直接用 atob 解码全局变量，不再用参数
                 html = html.replace(
-                    'rawExpires = expires;',
-                    'rawExpires = atob("' + b64_expires + '");'
+                    'document.getElementById("text").value = content;',
+                    'document.getElementById("text").value = atob(rawContent);'
                 )
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
