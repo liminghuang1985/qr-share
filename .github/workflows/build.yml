@@ -3,8 +3,6 @@ name: Build Windows EXE
 on:
   push:
     branches: [main]
-  release:
-    types: [created]
 
 jobs:
   build:
@@ -18,17 +16,14 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install pyinstaller qrcode
+        run: pip install pyinstaller qrcode
 
       - name: Build EXE
         run: |
           pyinstaller --name "文字二维码分享工具" --onefile --console text_share.py
-          ls dist/
 
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/文字二维码分享工具.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: qr-share-exe
+          path: dist/文字二维码分享工具.exe
