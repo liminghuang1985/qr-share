@@ -171,11 +171,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 html = VIEW_HTML
                 html = html.replace('var rawContent = "";', 'var rawContent = "' + b64_content + '";')
                 html = html.replace('var rawExpires = "";', 'var rawExpires = "' + b64_expires + '";')
-                # init() 里直接用 atob 解码全局变量，不再用参数
+                # init() 里 content 已经是全局 rawContent 的值（b64），需解码
                 html = html.replace(
                     'document.getElementById("text").value = content;',
-                    'document.getElementById("text").value = atob(rawContent);'
+                    'document.getElementById("text").value = atob(content);'
                 )
+                # 调用 init，让过期时间逻辑也执行
+                html = html.replace('</body>', '<script>init(rawContent, rawExpires);</script></body>')
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.end_headers()
