@@ -134,9 +134,9 @@ function showToast(msg) {
 }
 function init(content, expires) {
   rawContent = content;
-  var decodedExpires = expires ? atob(expires) : "";
+  var decodedExpires = expires ? decodeURIComponent(escape(atob(expires))) : "";
   rawExpires = decodedExpires;
-  document.getElementById("text").value = atob(content);
+  document.getElementById("text").value = decodeURIComponent(escape(atob(content)));
   if (decodedExpires) {
     var parts = decodedExpires.split(/[- :]/);
     var d = new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4], parts[5]);
