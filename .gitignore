@@ -1,0 +1,14 @@
+# PyInstaller
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
+
+# Local artifacts
+qr-share-exe.zip
+文字二维码分享工具.exe
+
+# Data
+texts.json
+start.sh

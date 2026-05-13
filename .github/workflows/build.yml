@@ -20,7 +20,7 @@ jobs:
 
       - name: Build EXE
         run: |
-          pyinstaller --name "文字二维码分享工具" --onefile --console text_share.py
+          pyinstaller --name "文字二维码分享工具" --onefile --console --collect-all qrcode text_share.py
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
